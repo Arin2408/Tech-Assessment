@@ -8,13 +8,7 @@ import {
   selectSortField,
   selectSortDir,
 } from "@/store/selectors";
-import {
-  setSearch,
-  setStatusFilter,
-  setTypeFilter,
-  setSort,
-  SortField,
-} from "@/store/uiSlice";
+import { setSearch, setStatusFilter, setTypeFilter, setSort, SortField } from "@/store/uiSlice";
 import { TaskStatus, TaskType } from "@/lib/types";
 
 const TYPE_OPTIONS: Array<{ value: TaskType | "all"; label: string }> = [
@@ -41,8 +35,8 @@ const SORT_OPTIONS: Array<{ value: SortField; label: string }> = [
   { value: "title", label: "Title" },
 ];
 
-const selectCls =
-  "rounded border border-gray-300 bg-white px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none";
+const fieldCls =
+  "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100";
 
 export function Filters() {
   const dispatch = useAppDispatch();
@@ -54,20 +48,33 @@ export function Filters() {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <input
-        type="search"
-        aria-label="Search tasks"
-        placeholder="Search title or id…"
-        value={search}
-        onChange={(e) => dispatch(setSearch(e.target.value))}
-        className={`${selectCls} min-w-[12rem] flex-1`}
-      />
+      <div className="relative min-w-[14rem] flex-1">
+        <svg
+          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.8}
+          viewBox="0 0 24 24"
+          aria-hidden
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" strokeLinecap="round" />
+        </svg>
+        <input
+          type="search"
+          aria-label="Search tasks"
+          placeholder="Search title or id…"
+          value={search}
+          onChange={(e) => dispatch(setSearch(e.target.value))}
+          className={`${fieldCls} w-full pl-9`}
+        />
+      </div>
 
       <select
         aria-label="Filter by type"
         value={typeFilter}
         onChange={(e) => dispatch(setTypeFilter(e.target.value as TaskType | "all"))}
-        className={selectCls}
+        className={fieldCls}
       >
         {TYPE_OPTIONS.map((o) => (
           <option key={o.value} value={o.value}>
@@ -80,7 +87,7 @@ export function Filters() {
         aria-label="Filter by status"
         value={statusFilter}
         onChange={(e) => dispatch(setStatusFilter(e.target.value as TaskStatus | "all"))}
-        className={selectCls}
+        className={fieldCls}
       >
         {STATUS_OPTIONS.map((o) => (
           <option key={o.value} value={o.value}>
@@ -89,13 +96,13 @@ export function Filters() {
         ))}
       </select>
 
-      <div className="flex items-center gap-1">
-        <label className="text-xs text-gray-500">Sort</label>
+      <div className="flex items-center overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+        <span className="px-2 text-xs font-medium text-slate-400">Sort</span>
         <select
           aria-label="Sort field"
           value={sortField}
           onChange={(e) => dispatch(setSort({ field: e.target.value as SortField }))}
-          className={selectCls}
+          className="border-0 bg-transparent py-2 pl-1 pr-2 text-sm text-slate-700 focus:outline-none focus:ring-0"
         >
           {SORT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -106,8 +113,10 @@ export function Filters() {
         <button
           type="button"
           aria-label={`Toggle sort direction (currently ${sortDir})`}
-          onClick={() => dispatch(setSort({ field: sortField, dir: sortDir === "asc" ? "desc" : "asc" }))}
-          className="rounded border border-gray-300 bg-white px-2 py-1.5 text-sm hover:bg-gray-50"
+          onClick={() =>
+            dispatch(setSort({ field: sortField, dir: sortDir === "asc" ? "desc" : "asc" }))
+          }
+          className="border-l border-slate-200 px-2.5 py-2 text-slate-500 transition hover:bg-slate-50 hover:text-slate-700"
         >
           {sortDir === "asc" ? "↑" : "↓"}
         </button>

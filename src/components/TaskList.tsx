@@ -11,6 +11,7 @@ import { selectTask } from "@/store/uiSlice";
 import { fetchTasks } from "@/store/tasksSlice";
 import { Task } from "@/lib/types";
 import { StatusBadge } from "./StatusBadge";
+import { Avatar, TypeBadge } from "./ui";
 
 function relativeTime(ms: number): string {
   if (!ms) return "—";
@@ -29,36 +30,42 @@ function TaskRow({ task, selected }: { task: Task; selected: boolean }) {
   return (
     <tr
       onClick={() => dispatch(selectTask(task.id))}
-      className={`cursor-pointer border-b border-gray-100 hover:bg-blue-50 ${
-        selected ? "bg-blue-100" : ""
+      className={`group cursor-pointer border-b border-slate-100 transition last:border-0 ${
+        selected ? "bg-indigo-50/70" : "hover:bg-slate-50"
       }`}
       aria-selected={selected}
     >
-      <td className="px-3 py-2">
-        <div className="font-medium text-gray-900">
-          {task.title}
+      <td className="relative px-4 py-3">
+        {selected && <span className="absolute inset-y-0 left-0 w-1 rounded-r bg-indigo-500" />}
+        <div className="flex items-center gap-2 font-medium text-slate-800">
+          <span className="truncate">{task.title}</span>
           {task.partial && (
             <span
               title="Discovered via a live event before its full record loaded"
-              className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800"
+              className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800"
             >
               partial
             </span>
           )}
         </div>
-        <div className="text-xs text-gray-400">{task.id}</div>
+        <div className="mt-0.5 font-mono text-xs text-slate-400">{task.id}</div>
       </td>
-      <td className="px-3 py-2 text-sm capitalize text-gray-600">
-        {task.type === "unknown" && task.rawType ? `unknown (${task.rawType})` : task.type}
+      <td className="px-4 py-3">
+        <TypeBadge type={task.type} rawType={task.type === "unknown" ? task.rawType : undefined} />
       </td>
-      <td className="px-3 py-2">
+      <td className="px-4 py-3">
         <StatusBadge status={task.status} rawStatus={task.rawStatus} />
       </td>
-      <td className="px-3 py-2 text-sm text-gray-600">{task.assignee?.name ?? "Unassigned"}</td>
-      <td className="px-3 py-2 text-right text-sm tabular-nums text-gray-600">
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-2 text-sm text-slate-600">
+          <Avatar name={task.assignee?.name} id={task.assignee?.id} />
+          <span className="truncate">{task.assignee?.name ?? "Unassigned"}</span>
+        </div>
+      </td>
+      <td className="px-4 py-3 text-right text-sm font-medium tabular-nums text-slate-700">
         {task.annotationCount}
       </td>
-      <td className="px-3 py-2 text-right text-sm text-gray-500">{relativeTime(task.updatedAt)}</td>
+      <td className="px-4 py-3 text-right text-sm text-slate-500">{relativeTime(task.updatedAt)}</td>
     </tr>
   );
 }
@@ -72,16 +79,13 @@ export function TaskList() {
 
   if (loadStatus === "failed") {
     return (
-      <div
-        role="alert"
-        className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700"
-      >
+      <div role="alert" className="m-4 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
         <p className="font-semibold">Failed to load tasks.</p>
-        <p className="mt-1">{error}</p>
+        <p className="mt-1 text-rose-600">{error}</p>
         <button
           type="button"
           onClick={() => dispatch(fetchTasks({ page: 1, pageSize: 20 }))}
-          className="mt-2 rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700"
+          className="mt-3 rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-rose-700"
         >
           Retry
         </button>
@@ -91,9 +95,9 @@ export function TaskList() {
 
   if (loadStatus === "loading" && rows.length === 0) {
     return (
-      <div className="space-y-2" aria-busy="true" aria-label="Loading tasks">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-10 animate-pulse rounded bg-gray-100" />
+      <div className="space-y-2 p-4" aria-busy="true" aria-label="Loading tasks">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <div key={i} className="h-12 animate-pulse rounded-lg bg-slate-100" />
         ))}
       </div>
     );
@@ -101,29 +105,36 @@ export function TaskList() {
 
   if (rows.length === 0) {
     return (
-      <div className="rounded border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
-        No tasks match your filters.
+      <div className="m-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 p-10 text-center">
+        <svg className="h-8 w-8 text-slate-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden>
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" strokeLinecap="round" />
+        </svg>
+        <p className="mt-2 text-sm font-medium text-slate-600">No tasks match your filters.</p>
+        <p className="text-xs text-slate-400">Try clearing the search or changing the type/status.</p>
       </div>
     );
   }
 
   return (
-    <table className="w-full border-collapse text-left">
-      <thead>
-        <tr className="border-b border-gray-200 text-xs uppercase tracking-wide text-gray-500">
-          <th className="px-3 py-2 font-medium">Task</th>
-          <th className="px-3 py-2 font-medium">Type</th>
-          <th className="px-3 py-2 font-medium">Status</th>
-          <th className="px-3 py-2 font-medium">Assignee</th>
-          <th className="px-3 py-2 text-right font-medium">Annot.</th>
-          <th className="px-3 py-2 text-right font-medium">Updated</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((task) => (
-          <TaskRow key={task.id} task={task} selected={task.id === selectedId} />
-        ))}
-      </tbody>
-    </table>
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse text-left">
+        <thead>
+          <tr className="border-b border-slate-200 bg-slate-50/60 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <th className="px-4 py-2.5">Task</th>
+            <th className="px-4 py-2.5">Type</th>
+            <th className="px-4 py-2.5">Status</th>
+            <th className="px-4 py-2.5">Assignee</th>
+            <th className="px-4 py-2.5 text-right">Annot.</th>
+            <th className="px-4 py-2.5 text-right">Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((task) => (
+            <TaskRow key={task.id} task={task} selected={task.id === selectedId} />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

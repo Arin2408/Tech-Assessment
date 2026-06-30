@@ -7,30 +7,47 @@ export function SummaryView({ taskId }: { taskId: string }) {
   const { text, status, error } = useTaskSummary(taskId);
 
   return (
-    <section className="mt-4">
+    <section className="mt-5">
       <div className="mb-2 flex items-center gap-2">
-        <h3 className="text-sm font-semibold text-gray-700">AI Summary</h3>
+        <h3 className="flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+          <svg className="h-4 w-4 text-indigo-500" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden>
+            <path d="M12 3l1.9 4.7L19 9.5l-4 3.3 1.3 5.2L12 15.8 7.7 18l1.3-5.2-4-3.3 5.1-1.8z" strokeLinejoin="round" />
+          </svg>
+          AI Summary
+        </h3>
         {status === "streaming" && (
-          <span className="flex items-center gap-1 text-xs text-blue-600">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-600" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-500" />
             streaming…
           </span>
         )}
-        {status === "done" && <span className="text-xs text-green-600">complete</span>}
+        {status === "done" && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">
+            ✓ complete
+          </span>
+        )}
       </div>
 
       {status === "error" && (
-        <div role="alert" className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
           Summary stream failed: {error}
         </div>
       )}
 
       {text ? (
-        <div className="rounded border border-gray-200 bg-white p-3">
+        <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4">
           <Markdown content={text} />
+          {status === "streaming" && (
+            <span className="ml-0.5 inline-block h-4 w-1.5 animate-pulse rounded-sm bg-indigo-400 align-text-bottom" />
+          )}
         </div>
       ) : (
-        status === "streaming" && <div className="text-sm text-gray-400">Waiting for first chunk…</div>
+        status === "streaming" && (
+          <div className="flex items-center gap-2 text-sm text-slate-400">
+            <span className="h-3 w-3 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-500" />
+            Waiting for first chunk…
+          </div>
+        )
       )}
     </section>
   );
