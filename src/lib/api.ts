@@ -21,7 +21,18 @@ export async function fetchTasksPage({
   signal,
 }: FetchTasksArgs): Promise<RawTasksResponse> {
   const url = `${API_BASE}/api/tasks?page=${page}&pageSize=${pageSize}`;
-  const res = await fetch(url, { signal });
+  let res: Response;
+  try {
+    res = await fetch(url, { signal });
+  } catch (err) {
+    // Preserve aborts so the thunk can ignore intentional cancellations.
+    if (err instanceof DOMException && err.name === "AbortError") throw err;
+    // A network-level failure ("Failed to fetch") almost always means the mock
+    // API at API_BASE isn't reachable. Give an actionable message.
+    throw new Error(
+      `Cannot reach the API at ${API_BASE}. Is the mock server running? Start it with \`npm run mock\` (or \`cd mock-server && npm run mock\`).`,
+    );
+  }
   if (!res.ok) {
     throw new Error(`Failed to fetch tasks (page ${page}): HTTP ${res.status}`);
   }

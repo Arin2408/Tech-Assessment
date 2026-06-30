@@ -12,9 +12,24 @@ Toolkit**, **Tailwind**, and tested with **Jest + React Testing Library**.
 
 ## Running it
 
-You need two processes: the mock server and the Next app.
+The app needs the mock API. You have two options.
 
-### 1. Start the mock server (port 4000)
+### Easiest: one command (starts both)
+
+```bash
+npm install
+npm run dev:all
+# starts the mock server (:4000) and the Next app (:3000) together
+```
+
+> If you only run `npm run dev` without the mock server, the UI will show
+> "Reconnecting" and "Failed to load tasks / Failed to fetch" — that just means
+> the API at http://localhost:4000 isn't running. Start the mock (below or via
+> `dev:all`) and the app **recovers on its own** (it auto-retries with backoff).
+
+### Or: two terminals (matches the original brief)
+
+#### 1. Start the mock server (port 4000)
 
 ```bash
 cd mock-server
@@ -23,7 +38,7 @@ npm run mock
 # -> mock on http://localhost:4000 (ws://localhost:4000/ws)
 ```
 
-### 2. Start the app (port 3000)
+#### 2. Start the app (port 3000)
 
 In a second terminal, from the repo root:
 
@@ -51,7 +66,8 @@ NEXT_PUBLIC_WS_URL=ws://localhost:4000/ws     # WebSocket URL
 
 | Command            | What it does                                 |
 | ------------------ | -------------------------------------------- |
-| `npm run dev`      | Start the Next dev server                    |
+| `npm run dev`      | Start the Next dev server only               |
+| `npm run dev:all`  | Start the mock server **and** the app together |
 | `npm run build`    | Production build (also runs lint + types)    |
 | `npm test`         | Run the Jest + RTL suite                     |
 | `npm run typecheck`| `tsc --noEmit` (strict)                      |

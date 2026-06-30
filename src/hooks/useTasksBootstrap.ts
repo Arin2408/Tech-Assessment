@@ -15,17 +15,27 @@ import { useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchTasks, hydrateFromCache } from "@/store/tasksSlice";
 import { readCachedTasks, writeCachedTasks } from "@/lib/idb";
-import { selectAllTasks, selectLoadedPages, selectServerTotal } from "@/store/selectors";
+import {
+  selectAllTasks,
+  selectLoadStatus,
+  selectLoadedPages,
+  selectServerTotal,
+} from "@/store/selectors";
 
 const PERSIST_DEBOUNCE_MS = 800;
+const RETRY_BASE_MS = 2_000;
+const RETRY_MAX_MS = 15_000;
 
 export function useTasksBootstrap(pageSize = 20): void {
   const dispatch = useAppDispatch();
   const tasks = useAppSelector(selectAllTasks);
   const total = useAppSelector(selectServerTotal);
   const loadedPages = useAppSelector(selectLoadedPages);
+  const loadStatus = useAppSelector(selectLoadStatus);
   const didInit = useRef(false);
   const persistTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryAttempt = useRef(0);
 
   // Step 1 + 2: hydrate from cache, then revalidate.
   useEffect(() => {
@@ -44,6 +54,24 @@ export function useTasksBootstrap(pageSize = 20): void {
       cancelled = true;
     };
   }, [dispatch, pageSize]);
+
+  // Self-heal: if the initial load failed (e.g. the mock server wasn't up
+  // yet), keep retrying with capped backoff so the UI recovers on its own once
+  // the API becomes reachable — no manual refresh needed. Resets on success.
+  useEffect(() => {
+    if (loadStatus === "failed") {
+      const attempt = retryAttempt.current++;
+      const delay = Math.min(RETRY_BASE_MS * 2 ** attempt, RETRY_MAX_MS);
+      retryTimer.current = setTimeout(() => {
+        dispatch(fetchTasks({ page: 1, pageSize }));
+      }, delay);
+    } else if (loadStatus === "succeeded") {
+      retryAttempt.current = 0;
+    }
+    return () => {
+      if (retryTimer.current) clearTimeout(retryTimer.current);
+    };
+  }, [loadStatus, dispatch, pageSize]);
 
   // Step 3: debounced persistence. Excludes partial stubs (incomplete data).
   useEffect(() => {

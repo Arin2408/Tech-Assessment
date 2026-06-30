@@ -19,13 +19,22 @@ describe("Markdown (sanitization boundary)", () => {
     expect(container.innerHTML).not.toContain("alert('xss-script')");
   });
 
-  it("strips event-handler attributes like onerror from <img>", () => {
+  it("removes untrusted <img> entirely so it makes no network request", () => {
     const { container } = render(
       <Markdown content={`<img src=x onerror="alert('xss-img')">`} />,
     );
-    const img = container.querySelector("img");
-    // The img may survive but its onerror handler must not.
-    if (img) expect(img.getAttribute("onerror")).toBeNull();
+    // The whole resource-loading tag is dropped — no img, no onerror, no src=x
+    // request fired on render.
+    expect(container.querySelector("img")).toBeNull();
     expect(container.innerHTML).not.toContain("onerror");
+    expect(container.innerHTML).not.toContain("src=");
+  });
+
+  it("strips other resource-loading tags (iframe, video) from untrusted content", () => {
+    const { container } = render(
+      <Markdown content={`<iframe src="evil"></iframe>\n\n<video src="evil"></video>`} />,
+    );
+    expect(container.querySelector("iframe")).toBeNull();
+    expect(container.querySelector("video")).toBeNull();
   });
 });

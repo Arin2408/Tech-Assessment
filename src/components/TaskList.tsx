@@ -84,13 +84,19 @@ export function TaskList() {
       <div role="alert" className="m-4 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300">
         <p className="font-semibold">Failed to load tasks.</p>
         <p className="mt-1 text-rose-600 dark:text-rose-400">{error}</p>
-        <button
-          type="button"
-          onClick={() => dispatch(fetchTasks({ page: 1, pageSize: 20 }))}
-          className="mt-3 rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-rose-700"
-        >
-          Retry
-        </button>
+        <div className="mt-3 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => dispatch(fetchTasks({ page: 1, pageSize: 20 }))}
+            className="rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-rose-700"
+          >
+            Retry now
+          </button>
+          <span className="flex items-center gap-1.5 text-xs text-rose-600/80 dark:text-rose-400/80">
+            <span className="h-3 w-3 animate-spin rounded-full border-2 border-rose-300 border-t-rose-600" />
+            Retrying automatically…
+          </span>
+        </div>
       </div>
     );
   }

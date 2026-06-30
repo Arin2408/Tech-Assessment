@@ -11,15 +11,43 @@
  *    `on*` event-handler attributes (so `<img onerror=...>` loses its handler).
  *  - We additionally forbid the `<script>` tag and `onerror` attr explicitly as
  *    defense-in-depth, and run with the default (HTML, not SVG/MathML) profile.
+ *  - We forbid every *resource-loading* tag (img, video, audio, iframe, …) so
+ *    untrusted content can make NO network requests at all. This blocks the
+ *    obvious script vector AND quieter ones: tracking pixels, SSRF-style
+ *    probes, and the junk request the mock's `<img src=x>` would otherwise fire
+ *    on every render. A summary is text + code; it has no business loading
+ *    remote resources.
  *  - Sanitization runs client-side only; we render nothing on the server pass
  *    (DOMPurify needs a DOM), avoiding any chance of unsanitized SSR output.
+ *  - The component is memoized, so a stable summary is not re-sanitized /
+ *    re-injected when unrelated live events re-render the surrounding panel.
  */
 
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
 
 marked.setOptions({ gfm: true, breaks: false });
+
+// Tags that can trigger a network fetch or execute code. Untrusted summary
+// content is never allowed to use them.
+const FORBIDDEN_TAGS = [
+  "script",
+  "style",
+  "iframe",
+  "object",
+  "embed",
+  "img",
+  "image",
+  "picture",
+  "source",
+  "video",
+  "audio",
+  "track",
+  "link",
+  "base",
+  "form",
+];
 
 function sanitize(markdown: string): string {
   // marked.parse is synchronous for string input with async:false (default).
@@ -29,13 +57,13 @@ function sanitize(markdown: string): string {
     return "";
   }
   return DOMPurify.sanitize(rawHtml, {
-    FORBID_TAGS: ["script", "style", "iframe", "object", "embed"],
-    FORBID_ATTR: ["onerror", "onload", "onclick"],
+    FORBID_TAGS: FORBIDDEN_TAGS,
+    FORBID_ATTR: ["onerror", "onload", "onclick", "srcset"],
     USE_PROFILES: { html: true },
   });
 }
 
-export function Markdown({ content }: { content: string }) {
+export const Markdown = memo(function Markdown({ content }: { content: string }) {
   const html = useMemo(() => sanitize(content), [content]);
   return (
     <div
@@ -44,4 +72,4 @@ export function Markdown({ content }: { content: string }) {
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
-}
+});
