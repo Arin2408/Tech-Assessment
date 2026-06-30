@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { StoreProvider } from "./StoreProvider";
+import { NO_FLASH_SCRIPT } from "@/lib/theme";
 
 export const metadata: Metadata = {
   title: "Annotation Activity Console",
@@ -9,7 +10,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Set the theme class before paint to avoid a flash of the wrong theme. */}
+        <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
+      </head>
       <body>
         <StoreProvider>{children}</StoreProvider>
       </body>

@@ -30,25 +30,25 @@ function TaskRow({ task, selected }: { task: Task; selected: boolean }) {
   return (
     <tr
       onClick={() => dispatch(selectTask(task.id))}
-      className={`group cursor-pointer border-b border-slate-100 transition last:border-0 ${
-        selected ? "bg-indigo-50/70" : "hover:bg-slate-50"
+      className={`group cursor-pointer border-b border-slate-100 transition last:border-0 dark:border-slate-800 ${
+        selected ? "bg-indigo-50/70 dark:bg-indigo-500/10" : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
       }`}
       aria-selected={selected}
     >
       <td className="relative px-4 py-3">
         {selected && <span className="absolute inset-y-0 left-0 w-1 rounded-r bg-indigo-500" />}
-        <div className="flex items-center gap-2 font-medium text-slate-800">
+        <div className="flex items-center gap-2 font-medium text-slate-800 dark:text-slate-100">
           <span className="truncate">{task.title}</span>
           {task.partial && (
             <span
               title="Discovered via a live event before its full record loaded"
-              className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800"
+              className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800 dark:bg-amber-500/20 dark:text-amber-300"
             >
               partial
             </span>
           )}
         </div>
-        <div className="mt-0.5 font-mono text-xs text-slate-400">{task.id}</div>
+        <div className="mt-0.5 font-mono text-xs text-slate-400 dark:text-slate-500">{task.id}</div>
       </td>
       <td className="px-4 py-3">
         <TypeBadge type={task.type} rawType={task.type === "unknown" ? task.rawType : undefined} />
@@ -57,15 +57,17 @@ function TaskRow({ task, selected }: { task: Task; selected: boolean }) {
         <StatusBadge status={task.status} rawStatus={task.rawStatus} />
       </td>
       <td className="px-4 py-3">
-        <div className="flex items-center gap-2 text-sm text-slate-600">
+        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
           <Avatar name={task.assignee?.name} id={task.assignee?.id} />
           <span className="truncate">{task.assignee?.name ?? "Unassigned"}</span>
         </div>
       </td>
-      <td className="px-4 py-3 text-right text-sm font-medium tabular-nums text-slate-700">
+      <td className="px-4 py-3 text-right text-sm font-medium tabular-nums text-slate-700 dark:text-slate-200">
         {task.annotationCount}
       </td>
-      <td className="px-4 py-3 text-right text-sm text-slate-500">{relativeTime(task.updatedAt)}</td>
+      <td className="px-4 py-3 text-right text-sm text-slate-500 dark:text-slate-400">
+        {relativeTime(task.updatedAt)}
+      </td>
     </tr>
   );
 }
@@ -79,9 +81,9 @@ export function TaskList() {
 
   if (loadStatus === "failed") {
     return (
-      <div role="alert" className="m-4 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+      <div role="alert" className="m-4 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300">
         <p className="font-semibold">Failed to load tasks.</p>
-        <p className="mt-1 text-rose-600">{error}</p>
+        <p className="mt-1 text-rose-600 dark:text-rose-400">{error}</p>
         <button
           type="button"
           onClick={() => dispatch(fetchTasks({ page: 1, pageSize: 20 }))}
@@ -97,7 +99,7 @@ export function TaskList() {
     return (
       <div className="space-y-2 p-4" aria-busy="true" aria-label="Loading tasks">
         {Array.from({ length: 7 }).map((_, i) => (
-          <div key={i} className="h-12 animate-pulse rounded-lg bg-slate-100" />
+          <div key={i} className="h-12 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
         ))}
       </div>
     );
@@ -105,13 +107,13 @@ export function TaskList() {
 
   if (rows.length === 0) {
     return (
-      <div className="m-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 p-10 text-center">
-        <svg className="h-8 w-8 text-slate-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden>
+      <div className="m-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 p-10 text-center dark:border-slate-700">
+        <svg className="h-8 w-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden>
           <circle cx="11" cy="11" r="7" />
           <path d="m20 20-3.5-3.5" strokeLinecap="round" />
         </svg>
-        <p className="mt-2 text-sm font-medium text-slate-600">No tasks match your filters.</p>
-        <p className="text-xs text-slate-400">Try clearing the search or changing the type/status.</p>
+        <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-300">No tasks match your filters.</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">Try clearing the search or changing the type/status.</p>
       </div>
     );
   }
@@ -120,7 +122,7 @@ export function TaskList() {
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-left">
         <thead>
-          <tr className="border-b border-slate-200 bg-slate-50/60 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr className="border-b border-slate-200 bg-slate-50/60 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-400">
             <th className="px-4 py-2.5">Task</th>
             <th className="px-4 py-2.5">Type</th>
             <th className="px-4 py-2.5">Status</th>

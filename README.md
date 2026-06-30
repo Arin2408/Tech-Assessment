@@ -77,6 +77,14 @@ selectors (filter/sort/derived metric), the live-event merge reducer, markdown
 sanitization (XSS payloads are stripped), the filter→rows RTL interaction, and
 the TaskTicker null-guard fix.
 
+## Theming
+
+Light/dark mode toggle in the header (sun/moon). The choice persists to
+`localStorage` and defaults to the OS preference; an inline script in the
+document head applies the theme before first paint, so there's no flash of the
+wrong theme on reload. Implemented with Tailwind's `class` dark mode
+(`src/lib/theme.ts`, `src/components/ThemeToggle.tsx`).
+
 ## Notes / known scope
 
 - The mock paginates server-side but **ignores** `type`/`status` query params,

@@ -23,24 +23,24 @@ export function StatusChart() {
   return (
     <Card className="p-4">
       <div className="mb-3 flex items-baseline justify-between">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
           Tasks per status
         </h3>
-        <span className="text-xs text-slate-400">{total} loaded</span>
+        <span className="text-xs text-slate-400 dark:text-slate-500">{total} loaded</span>
       </div>
       <div className="space-y-2">
         {ORDER.map((o) => {
           const n = counts[o.status];
           return (
             <div key={o.status} className="flex items-center gap-3 text-xs">
-              <span className="w-24 shrink-0 text-slate-600">{o.label}</span>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+              <span className="w-24 shrink-0 text-slate-600 dark:text-slate-300">{o.label}</span>
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                 <div
                   className={`h-full rounded-full ${o.bar} transition-[width] duration-500`}
                   style={{ width: `${(n / max) * 100}%` }}
                 />
               </div>
-              <span className="w-7 text-right font-medium tabular-nums text-slate-700">{n}</span>
+              <span className="w-7 text-right font-medium tabular-nums text-slate-700 dark:text-slate-200">{n}</span>
             </div>
           );
         })}

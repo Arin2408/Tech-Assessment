@@ -25,13 +25,14 @@ import { Pagination } from "./Pagination";
 import { DetailPanel } from "./DetailPanel";
 import { StatusChart } from "./StatusChart";
 import { Card } from "./ui";
+import { ThemeToggle } from "./ThemeToggle";
 
 function FeedPill({ status }: { status: FeedStatus }) {
   const map: Record<FeedStatus, { label: string; cls: string; dot: string }> = {
-    open: { label: "Live", cls: "bg-emerald-50 text-emerald-700 ring-emerald-200", dot: "bg-emerald-500" },
-    connecting: { label: "Connecting", cls: "bg-slate-100 text-slate-600 ring-slate-200", dot: "bg-slate-400 animate-pulse" },
-    reconnecting: { label: "Reconnecting", cls: "bg-amber-50 text-amber-700 ring-amber-200", dot: "bg-amber-500 animate-pulse" },
-    closed: { label: "Offline", cls: "bg-rose-50 text-rose-700 ring-rose-200", dot: "bg-rose-500" },
+    open: { label: "Live", cls: "bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:ring-emerald-500/30", dot: "bg-emerald-500" },
+    connecting: { label: "Connecting", cls: "bg-slate-100 text-slate-600 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700", dot: "bg-slate-400 animate-pulse" },
+    reconnecting: { label: "Reconnecting", cls: "bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:ring-amber-500/30", dot: "bg-amber-500 animate-pulse" },
+    closed: { label: "Offline", cls: "bg-rose-50 text-rose-700 ring-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:ring-rose-500/30", dot: "bg-rose-500" },
   };
   const m = map[status];
   return (
@@ -49,10 +50,10 @@ function FeedPill({ status }: { status: FeedStatus }) {
   );
 }
 
-function Stat({ label, value, accent = "text-slate-900" }: { label: string; value: React.ReactNode; accent?: string }) {
+function Stat({ label, value, accent = "text-slate-900 dark:text-slate-100" }: { label: string; value: React.ReactNode; accent?: string }) {
   return (
     <div className="flex flex-col">
-      <span className="text-[11px] font-medium uppercase tracking-wide text-slate-400">{label}</span>
+      <span className="text-[11px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">{label}</span>
       <span className={`text-lg font-semibold tabular-nums ${accent}`}>{value}</span>
     </div>
   );
@@ -77,7 +78,7 @@ export function Console() {
   return (
     <div className="min-h-screen">
       {/* Sticky top bar */}
-      <header className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/80 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-sky-500 text-white shadow-sm">
@@ -86,13 +87,16 @@ export function Console() {
               </svg>
             </span>
             <div>
-              <h1 className="text-base font-semibold leading-tight text-slate-900">
+              <h1 className="text-base font-semibold leading-tight text-slate-900 dark:text-slate-100">
                 Annotation Activity Console
               </h1>
-              <p className="text-xs text-slate-500">Live task monitoring &amp; AI summaries</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Live task monitoring &amp; AI summaries</p>
             </div>
           </div>
-          <FeedPill status={feedStatus} />
+          <div className="flex items-center gap-2">
+            <FeedPill status={feedStatus} />
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
@@ -106,7 +110,7 @@ export function Console() {
         </Card>
 
         {fromCache && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
             <span className="h-3 w-3 animate-spin rounded-full border-2 border-amber-300 border-t-amber-600" />
             Showing cached data
             {cachedAt ? ` from ${new Date(cachedAt).toLocaleTimeString()}` : ""}. Revalidating…
@@ -123,18 +127,18 @@ export function Console() {
               <Pagination />
             </Card>
             <div className="flex items-center justify-between gap-2 px-1 text-sm">
-              <span className="text-slate-500">
-                Server pages loaded: <span className="font-medium text-slate-700">{loadedPages}</span> ·{" "}
+              <span className="text-slate-500 dark:text-slate-400">
+                Server pages loaded: <span className="font-medium text-slate-700 dark:text-slate-200">{loadedPages}</span> ·{" "}
                 {loadedCount}/{serverTotal}
               </span>
               <button
                 type="button"
                 onClick={() => dispatch(loadNextPage())}
                 disabled={allLoaded || loadStatus === "loading"}
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:shadow-none dark:hover:bg-slate-700"
               >
                 {loadStatus === "loading" && !allLoaded && (
-                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-500" />
+                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-500 dark:border-slate-600" />
                 )}
                 {allLoaded ? "All loaded" : loadStatus === "loading" ? "Loading…" : "Load more"}
               </button>

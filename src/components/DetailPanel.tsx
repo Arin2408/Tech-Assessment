@@ -18,12 +18,12 @@ export function DetailPanel() {
   if (!task) {
     return (
       <Card className="flex h-full min-h-[16rem] flex-col items-center justify-center p-8 text-center">
-        <svg className="h-9 w-9 text-slate-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden>
+        <svg className="h-9 w-9 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden>
           <rect x="3" y="4" width="18" height="16" rx="2" />
           <path d="M3 9h18M8 14h8" strokeLinecap="round" />
         </svg>
-        <p className="mt-3 text-sm font-medium text-slate-600">No task selected</p>
-        <p className="mt-1 text-xs text-slate-400">Pick a task to see details and its AI summary.</p>
+        <p className="mt-3 text-sm font-medium text-slate-600 dark:text-slate-300">No task selected</p>
+        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Pick a task to see details and its AI summary.</p>
       </Card>
     );
   }
@@ -44,16 +44,16 @@ export function DetailPanel() {
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-start justify-between gap-2 border-b border-slate-100 bg-slate-50/60 p-4">
+      <div className="flex items-start justify-between gap-2 border-b border-slate-100 bg-slate-50/60 p-4 dark:border-slate-800 dark:bg-slate-800/40">
         <div className="min-w-0">
-          <h2 className="truncate text-base font-semibold text-slate-900">{task.title}</h2>
-          <p className="mt-0.5 font-mono text-xs text-slate-400">{task.id}</p>
+          <h2 className="truncate text-base font-semibold text-slate-900 dark:text-slate-100">{task.title}</h2>
+          <p className="mt-0.5 font-mono text-xs text-slate-400 dark:text-slate-500">{task.id}</p>
         </div>
         <button
           type="button"
           aria-label="Close detail panel"
           onClick={() => dispatch(selectTask(null))}
-          className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-200/60 hover:text-slate-600"
+          className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-200/60 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"
         >
           <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden>
             <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
@@ -63,7 +63,7 @@ export function DetailPanel() {
 
       <div className="p-4">
         {task.partial && (
-          <p className="mb-3 rounded-lg bg-amber-50 p-2.5 text-xs text-amber-800 ring-1 ring-inset ring-amber-200">
+          <p className="mb-3 rounded-lg bg-amber-50 p-2.5 text-xs text-amber-800 ring-1 ring-inset ring-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/30">
             Discovered through a live event before its full record loaded. Some fields are
             placeholders until it loads from the server.
           </p>
@@ -71,33 +71,33 @@ export function DetailPanel() {
 
         <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
           <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">Type</dt>
+            <dt className="text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">Type</dt>
             <dd className="mt-1">
               <TypeBadge type={task.type} rawType={task.type === "unknown" ? task.rawType : undefined} />
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">Status</dt>
+            <dt className="text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">Status</dt>
             <dd className="mt-1">
               <StatusBadge status={task.status} rawStatus={task.rawStatus} />
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">Assignee</dt>
-            <dd className="mt-1 flex items-center gap-2 text-slate-700">
+            <dt className="text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">Assignee</dt>
+            <dd className="mt-1 flex items-center gap-2 text-slate-700 dark:text-slate-200">
               <Avatar name={task.assignee?.name} id={task.assignee?.id} size="md" />
               {task.assignee?.name ?? "Unassigned"}
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">Annotations</dt>
-            <dd className="mt-1 text-lg font-semibold tabular-nums text-slate-800">
+            <dt className="text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">Annotations</dt>
+            <dd className="mt-1 text-lg font-semibold tabular-nums text-slate-800 dark:text-slate-100">
               {task.annotationCount}
             </dd>
           </div>
           <div className="col-span-2">
-            <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">Updated</dt>
-            <dd className="mt-1 text-slate-600">
+            <dt className="text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">Updated</dt>
+            <dd className="mt-1 text-slate-600 dark:text-slate-300">
               {task.updatedAt ? new Date(task.updatedAt).toLocaleString() : "—"}
             </dd>
           </div>
@@ -122,7 +122,7 @@ export function DetailPanel() {
             )}
           </button>
           {assignError && (
-            <p role="alert" className="mt-2 text-xs text-rose-600">
+            <p role="alert" className="mt-2 text-xs text-rose-600 dark:text-rose-400">
               {assignError} — change rolled back.
             </p>
           )}

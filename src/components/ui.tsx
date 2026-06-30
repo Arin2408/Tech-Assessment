@@ -11,7 +11,7 @@ export function Card({
 }) {
   return (
     <div
-      className={`rounded-xl border border-slate-200 bg-white shadow-sm shadow-slate-200/50 ${className}`}
+      className={`rounded-xl border border-slate-200 bg-white shadow-sm shadow-slate-200/50 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none ${className}`}
     >
       {children}
     </div>
@@ -20,12 +20,12 @@ export function Card({
 
 /** Deterministic avatar with initials, colored from the user id. */
 const AVATAR_COLORS = [
-  "bg-rose-100 text-rose-700",
-  "bg-amber-100 text-amber-700",
-  "bg-emerald-100 text-emerald-700",
-  "bg-sky-100 text-sky-700",
-  "bg-violet-100 text-violet-700",
-  "bg-fuchsia-100 text-fuchsia-700",
+  "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300",
+  "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300",
+  "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300",
+  "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300",
+  "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300",
+  "bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-500/20 dark:text-fuchsia-300",
 ];
 
 function hashString(s: string): number {
@@ -54,7 +54,7 @@ export function Avatar({
   if (!name) {
     return (
       <span
-        className={`inline-flex ${dim} items-center justify-center rounded-full border border-dashed border-slate-300 text-slate-400`}
+        className={`inline-flex ${dim} items-center justify-center rounded-full border border-dashed border-slate-300 text-slate-400 dark:border-slate-600 dark:text-slate-500`}
         aria-hidden
       >
         —
@@ -110,8 +110,8 @@ export function TypeBadge({ type, rawType }: { type: TaskType; rawType?: string 
   const label = type === "unknown" && rawType ? `unknown · ${rawType}` : type;
   const tone =
     type === "unknown"
-      ? "bg-amber-50 text-amber-700 ring-amber-200"
-      : "bg-slate-50 text-slate-600 ring-slate-200";
+      ? "bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:ring-amber-500/30"
+      : "bg-slate-50 text-slate-600 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700";
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium capitalize ring-1 ring-inset ${tone}`}

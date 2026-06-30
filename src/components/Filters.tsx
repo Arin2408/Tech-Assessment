@@ -36,7 +36,7 @@ const SORT_OPTIONS: Array<{ value: SortField; label: string }> = [
 ];
 
 const fieldCls =
-  "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100";
+  "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:shadow-none dark:focus:border-indigo-500 dark:focus:ring-indigo-500/20";
 
 export function Filters() {
   const dispatch = useAppDispatch();
@@ -50,7 +50,7 @@ export function Filters() {
     <div className="flex flex-wrap items-center gap-2">
       <div className="relative min-w-[14rem] flex-1">
         <svg
-          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500"
           fill="none"
           stroke="currentColor"
           strokeWidth={1.8}
@@ -96,16 +96,16 @@ export function Filters() {
         ))}
       </select>
 
-      <div className="flex items-center overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-        <span className="px-2 text-xs font-medium text-slate-400">Sort</span>
+      <div className="flex items-center overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:shadow-none">
+        <span className="px-2 text-xs font-medium text-slate-400 dark:text-slate-500">Sort</span>
         <select
           aria-label="Sort field"
           value={sortField}
           onChange={(e) => dispatch(setSort({ field: e.target.value as SortField }))}
-          className="border-0 bg-transparent py-2 pl-1 pr-2 text-sm text-slate-700 focus:outline-none focus:ring-0"
+          className="border-0 bg-transparent py-2 pl-1 pr-2 text-sm text-slate-700 focus:outline-none focus:ring-0 dark:text-slate-200"
         >
           {SORT_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>
+            <option key={o.value} value={o.value} className="dark:bg-slate-800">
               {o.label}
             </option>
           ))}
@@ -116,7 +116,7 @@ export function Filters() {
           onClick={() =>
             dispatch(setSort({ field: sortField, dir: sortDir === "asc" ? "desc" : "asc" }))
           }
-          className="border-l border-slate-200 px-2.5 py-2 text-slate-500 transition hover:bg-slate-50 hover:text-slate-700"
+          className="border-l border-slate-200 px-2.5 py-2 text-slate-500 transition hover:bg-slate-50 hover:text-slate-700 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
         >
           {sortDir === "asc" ? "↑" : "↓"}
         </button>
