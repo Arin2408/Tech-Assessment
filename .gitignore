@@ -9,3 +9,7 @@ next-env.d.ts
 .env*.local
 mock-server/node_modules/
 .claude/
+
+# assessment brief (not for public repo)
+Technical Assessment Frontend Dev 1.pdf
+*.pdf
